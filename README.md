@@ -1,9 +1,11 @@
 # two-stage-recsys
 
+[![ci](https://github.com/anamankev/two-stage-recsys/actions/workflows/ci.yml/badge.svg)](https://github.com/anamankev/two-stage-recsys/actions/workflows/ci.yml)
+
 **A two-stage movie recommender built the way large production systems are.** A PyTorch
-**two-tower model** embeds users and movies in one vector space; **hnsw-engine** (my own HNSW
-vector search library, built from scratch in the companion project) retrieves 200 candidates per
-user from the full catalog; a **LightGBM LambdaRank** model reorders them using time-aware
+**two-tower model** embeds users and movies in one vector space;
+**[hnsw-engine](https://github.com/anamankev/hnsw-engine)** (my own HNSW vector search library,
+built from scratch) retrieves 200 candidates per user from the full catalog; a **LightGBM LambdaRank** model reorders them using time-aware
 features; a **FastAPI service** serves recommendations with a per-stage latency breakdown.
 Evaluated on MovieLens-1M with full-catalog ranking (no sampled negatives), a leakage-tested
 temporal split, 95% bootstrap confidence intervals and three-seed ablations. The full system
@@ -75,6 +77,9 @@ flowchart LR
 ## Quick start
 
 ```bash
+git clone https://github.com/anamankev/hnsw-engine.git
+git clone https://github.com/anamankev/two-stage-recsys.git
+uv venv --python 3.12 .venv
 uv pip install -e "hnsw-engine" -e "two-stage-recsys[bench,serve,dev]"
 cd two-stage-recsys
 make check            # lint, strict type check, tests
@@ -83,11 +88,16 @@ make serve            # http://127.0.0.1:8000/recommend/42
 make ml10m            # Tier 3 scale check on MovieLens-10M (65.6 MB download, about an hour)
 ```
 
+Both repositories sit side by side, with the environment next to them (`../.venv`, which the
+Makefile expects; pass `PY=...` otherwise). On macOS without Homebrew's `libomp`, LightGBM's wheel
+does not load; build it without OpenMP instead:
+`uv pip install --reinstall-package lightgbm --no-binary lightgbm "lightgbm==4.7.0" -C cmake.define.USE_OPENMP=OFF`.
+
 In Docker (built and tested; answers identical to the native service, see the
 [model card](docs/MODEL_CARD.md)):
 
 ```bash
-docker build -f two-stage-recsys/Dockerfile -t two-stage-recsys:0.1.0 .   # from the workspace root
+docker build -f two-stage-recsys/Dockerfile -t two-stage-recsys:0.1.0 .   # from the folder holding both clones
 docker run --rm -p 8000:8000 \
   -v "$PWD/two-stage-recsys/data:/app/two-stage-recsys/data:ro" \
   -v "$PWD/two-stage-recsys/results:/app/two-stage-recsys/results:ro" two-stage-recsys:0.1.0

@@ -1,5 +1,6 @@
 # Container for the recommendation service (milestone B8).
-# Build from the workspace root, because the service depends on the sibling hnsw-engine project;
+# Build from the folder that holds both repositories (hnsw-engine and two-stage-recsys side by
+# side), because the service depends on the sibling hnsw-engine project;
 # Dockerfile.dockerignore (next to this file) limits the build context to the two packages:
 #   docker build -f two-stage-recsys/Dockerfile -t two-stage-recsys:0.1.0 .
 # Data and trained artifacts are not baked in; mount them read-only:
