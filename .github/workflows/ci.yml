@@ -1,0 +1,26 @@
+# CI when two-stage-recsys is its own repository. It depends on hnsw-engine, which this workflow
+# installs from a sibling repository named "hnsw-engine" under the same GitHub owner; adjust the
+# URL if the repository is named differently. Lint, type check and tests; no dataset downloads.
+name: ci
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: python -m pip install --upgrade pip
+      # CPU-only PyTorch wheel (the default Linux wheel bundles CUDA).
+      - run: pip install torch --index-url https://download.pytorch.org/whl/cpu
+      - run: pip install "hnsw-engine @ git+https://github.com/${{ github.repository_owner }}/hnsw-engine.git"
+      - run: pip install -e ".[bench,serve,dev]"
+      - run: ruff check src tests experiments
+      - run: ruff format --check src tests experiments
+      - run: mypy src/recsys experiments
+      - run: pytest -q
