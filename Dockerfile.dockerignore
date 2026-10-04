@@ -1,0 +1,12 @@
+# Build context is the workspace root (see Dockerfile). BuildKit reads this file because it sits
+# next to the Dockerfile with the name <Dockerfile>.dockerignore. Allowlist: send only what the
+# image installs, never .venv, data, results or caches.
+*
+!hnsw-engine/pyproject.toml
+!hnsw-engine/README.md
+!hnsw-engine/src
+!two-stage-recsys/pyproject.toml
+!two-stage-recsys/README.md
+!two-stage-recsys/src
+**/__pycache__
+**/*.egg-info
