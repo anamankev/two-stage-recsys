@@ -1,0 +1,24 @@
+# Milestone B9 (Tier 3): baselines on MovieLens-10M, same protocol as configs/baselines.yaml.
+# ALS: a validation grid around the ML-1M optimum (128 factors, regularization 30, alpha 1);
+# regularization interacts with the number of ratings per user, so it is re-checked here
+# (docs/DESIGN.md section 9). Selection uses validation NDCG@10 only, in three passes:
+#   pass 1 (this grid)                 10: 0.0533, 30: 0.0542, 100: 0.0581  -> 100, on the edge
+#   pass 2 (configs/ml10m/als_pass2)   300: 0.0406, 1000: 0.0268             -> 100 is interior
+#   pass 3 (configs/ml10m/als_pass3)   60: 0.0568, 150: 0.0522               -> 100 confirmed
+# The selected model (regularization 100) is the implicit_als of this run (results/baselines/ml10m).
+# Each pass's run also scores its own best configuration on test (the script always does); the
+# choice between passes used validation NDCG@10 only.
+data:
+  data_dir: data
+  dataset: ml-10m
+  min_positives: 3
+evaluation:
+  k_max: 50
+  bootstrap_resamples: 1000
+  seed: 0
+als_grid:
+  factors: [128]
+  regularization: [10.0, 30.0, 100.0]
+  alpha: [1.0]
+  iterations: 15
+  seed: 0

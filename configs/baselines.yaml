@@ -1,0 +1,20 @@
+# Baselines (milestone B2). Hyperparameters are selected on validation NDCG@10 only.
+# ALS was tuned in three passes, each centred on the previous optimum (docs/DECISIONS.md, R6):
+#   pass 1: factors [32, 64, 128], regularization [0.1, 1, 10], alpha [5, 20]   -> best (128, 10, 5)
+#   pass 2: factors [64, 128, 256], regularization [1, 10, 100], alpha [1, 3, 10] -> best (64, 10, 1)
+#   pass 3 (this grid, previous optimum in its interior)                          -> best (128, 30, 1)
+# Tuning stopped once the top settings differed by ~0.001 validation NDCG@10, well inside the
+# metric's ~0.004 sampling noise (95% half-width over 6,035 users).
+data:
+  data_dir: data
+  min_positives: 3
+evaluation:
+  k_max: 50
+  bootstrap_resamples: 1000
+  seed: 0
+als_grid:
+  factors: [32, 64, 128]
+  regularization: [3.0, 10.0, 30.0]
+  alpha: [0.3, 1.0, 3.0]
+  iterations: 15
+  seed: 0

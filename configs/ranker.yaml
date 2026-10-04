@@ -1,0 +1,30 @@
+# Learned ranker (milestone B5): LightGBM LambdaRank over 200 hnsw-engine candidates.
+# Trained on validation targets, evaluated on test targets.
+# Features and LightGBM settings were chosen with experiments/tune_ranker.py on validation data
+# only (results/ranker_tuning/main/tuning.json): the base feature set lost to the plain two-tower
+# order, adding recency similarities won; see docs/DECISIONS.md (R9).
+data:
+  data_dir: data
+  min_positives: 3
+two_tower_run: results/two_tower/main
+retrieval_run: results/retrieval/main
+candidate_source: hnsw-engine
+ranker:
+  num_leaves: 7
+  learning_rate: 0.03
+  max_rounds: 1000
+  min_data_in_leaf: 400
+  feature_fraction: 0.8
+  bagging_fraction: 0.8
+  bagging_freq: 1
+  lambda_l2: 10.0
+  early_stopping_rounds: 50
+  holdout_fraction: 0.1
+  seed: 0
+  num_threads: 1
+  features: [tt_score, tt_rank, pop_before, pop_recent_30d, year, genre_affinity, user_activity,
+             gender, age, occupation, sim_last1, sim_recent5_mean, sim_recent5_max, item_age_years]
+evaluation:
+  k_max: 50
+  bootstrap_resamples: 1000
+  seed: 0

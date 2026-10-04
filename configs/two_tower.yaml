@@ -1,0 +1,26 @@
+# Two-tower retrieval model (milestone B3). Early stopping on validation Recall@100.
+data:
+  data_dir: data
+  min_positives: 3
+model:
+  embedding_dim: 64
+  hidden_dim: 128
+  history_length: 50
+  use_side_features: true
+  negatives: in_batch_logq
+  n_uniform_negatives: 1024
+  batch_size: 1024
+  max_epochs: 40
+  learning_rate: 0.001
+  weight_decay: 0.0
+  temperature: 0.05
+  learn_temperature: true
+  patience: 3
+  eval_k: 100
+  seed: 0
+  num_threads: 4
+  max_minutes: 20.0
+evaluation:
+  k_max: 200
+  bootstrap_resamples: 1000
+  seed: 0

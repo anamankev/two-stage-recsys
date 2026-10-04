@@ -1,0 +1,27 @@
+# Retrieval served by hnsw-engine (milestone B4). Item embeddings come from a two-tower run.
+data:
+  data_dir: data
+  min_positives: 3
+two_tower_run: results/two_tower/main
+n_candidates: 200
+recall_ks: [10, 50, 100, 200]
+retrievers:
+  exact: {}
+  hnsw-engine:
+    M: 16
+    ef_construction: 200
+    ef_search: 200
+    engine: reference
+  hnsw-engine-numba:
+    M: 16
+    ef_construction: 200
+    ef_search: 200
+    engine: numba
+  faiss-hnsw:
+    M: 16
+    ef_construction: 200
+    ef_search: 200
+evaluation:
+  k_max: 50
+  bootstrap_resamples: 1000
+  seed: 0

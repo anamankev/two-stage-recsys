@@ -1,0 +1,30 @@
+# Milestone B9 (Tier 3): the ML-1M ranker (configs/ranker.yaml) on MovieLens-10M, with the same
+# LightGBM settings. ML-10M has no user demographics, so gender, age and occupation are dropped
+# from the feature list. Candidates come from the compiled hnsw-engine (identical to the
+# pure-Python engine's on ML-1M).
+data:
+  data_dir: data
+  dataset: ml-10m
+  min_positives: 3
+two_tower_run: results/two_tower/ml10m
+retrieval_run: results/retrieval/ml10m
+candidate_source: hnsw-engine-numba
+ranker:
+  num_leaves: 7
+  learning_rate: 0.03
+  max_rounds: 1000
+  min_data_in_leaf: 400
+  feature_fraction: 0.8
+  bagging_fraction: 0.8
+  bagging_freq: 1
+  lambda_l2: 10.0
+  early_stopping_rounds: 50
+  holdout_fraction: 0.1
+  seed: 0
+  num_threads: 1
+  features: [tt_score, tt_rank, pop_before, pop_recent_30d, year, genre_affinity, user_activity,
+             sim_last1, sim_recent5_mean, sim_recent5_max, item_age_years]
+evaluation:
+  k_max: 50
+  bootstrap_resamples: 1000
+  seed: 0

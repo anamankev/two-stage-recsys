@@ -1,0 +1,17 @@
+# Milestone B9, ALS tuning pass 2 on MovieLens-10M. Pass 1 (configs/ml10m/baselines.yaml,
+# regularization [10, 30, 100]) selected 100, the edge of its grid, so this pass extends the grid
+# upwards. Run with --skip-simple: popularity and co-occurrence do not depend on it.
+data:
+  data_dir: data
+  dataset: ml-10m
+  min_positives: 3
+evaluation:
+  k_max: 50
+  bootstrap_resamples: 1000
+  seed: 0
+als_grid:
+  factors: [128]
+  regularization: [300.0, 1000.0]
+  alpha: [1.0]
+  iterations: 15
+  seed: 0
